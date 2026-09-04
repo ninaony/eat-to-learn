@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 #from core.views import IngredientViewSet
-from core.views import get_ingredients
+from core.views import get_ingredients, fetch_recipe
 
 #router = DefaultRouter()
 #router.register(r'ingredients', IngredientViewSet, basename='ingredient')
@@ -26,6 +26,7 @@ from core.views import get_ingredients
 urlpatterns = [
     #path('/', )
     path('admin/', admin.site.urls),
-    path('ingredient/', get_ingredients)
+    path('ingredient/', get_ingredients),
+    path('fetch/', fetch_recipe, name="fetch_recipe")
     #path('api/', include(router.urls)),
 ]
