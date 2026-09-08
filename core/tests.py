@@ -47,12 +47,12 @@ class FetchRecipe(TestCase):
         self.assertEqual("SITE_NOT_FOUND", response.json()["code"]) 
 
     def test_other_connection_erro_returns_502(self):
-            payload = {"site": "httpbin.org/status/404"}
+        payload = {"site": "httpbin.org/status/404"}
+        
+        response= self.client.get(self.url, payload)
             
-            response= self.client.get(self.url, payload)
-                   
-            self.assertEqual(response.status_code, 502) 
-            self.assertEqual("CONNECTION_ERROR", response.json()["code"]) 
+        self.assertEqual(response.status_code, 502) 
+        self.assertEqual("CONNECTION_ERROR", response.json()["code"]) 
 
     #def test_no_recipe_exists_returns_422(self):
         #return ""
