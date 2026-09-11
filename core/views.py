@@ -41,7 +41,8 @@ def fetch_recipe(request):
 
     # Handles network phase
     try:
-        response = requests.get(site, timeout=10) # extract content from website 
+        headers = {"User-Agent": "Mozilla/5.0"}
+        response = requests.get(site, timeout=10, headers=headers) # extract content from website 
         response.raise_for_status()
 
     except requests.exceptions.Timeout:
@@ -76,12 +77,19 @@ def fetch_recipe(request):
 
 
     # Handles recipe parsing
+
     try:
-        recipe_data = recipe_parser(response.text)
+        recipe_data = recipe_parser(response)
+        if not recipe_data:
+            error_data = {"status": 204, 
+                                  "code": "NO_RECIPE", 
+                                  "message": "No recipe found"}
+            return JsonResponse(error_data, status=204)
+        
 
     except RecipeParseError as e:
         error_data = {"status": 422, 
-                      "code": "RECIPE)_PARSE_ERROR", 
+                      "code": "RECIPE_PARSE_ERROR", 
                       "message": "No site found"}
         return JsonResponse(error_data, status=422)
     
@@ -89,5 +97,4 @@ def fetch_recipe(request):
 
 
     
-
 
