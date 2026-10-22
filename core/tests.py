@@ -9,7 +9,7 @@ class FetchRecipe(TestCase):
     from unittest.mock import patch
     import requests
 
-    url = reverse("fetch_recipe")
+    url = reverse("clip_recipe_view")
     payload = {"site": "https://www.gimmesomeoven.com/chipotle-chicken/"}
     
 
@@ -46,7 +46,7 @@ class FetchRecipe(TestCase):
         self.assertEqual(response.status_code, 404) 
         self.assertEqual("SITE_NOT_FOUND", response.json()["code"]) 
 
-    def test_other_connection_erro_returns_502(self):
+    def test_other_connection_error_returns_502(self):
         payload = {"site": "httpbin.org/status/404"}
         
         response= self.client.get(self.url, payload)

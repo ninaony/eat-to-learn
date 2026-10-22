@@ -1,35 +1,17 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import Ingredient
+from core.models import Ingredient
 #from django.core import serializers
 from django.http import JsonResponse
-from .serializers import IngredientSerializer
+from core.serializers import IngredientSerializer
+from django.views.decorators.http import require_GET, require_POST
 import requests
 
 
-from .recipes import recipe_parser, RecipeParseError
+from core.services.ingestion import clip_recipe, RecipeParseError
 
-# Create your views here.
-#class IngredientViewSet(viewsets.ModelViewSet):
-    #queryset = Ingredient.objects.all()
-    #serializer_class = IngredientSerializer*/
-
-def get_ingredients(request):
-    name = request.GET.get('name') #None if not provided
-    if name:
-        ingredients = Ingredient.objects.filter(name__icontains=name)
-    else:
-        ingredients = Ingredient.objects.all()
-
-    serializer = IngredientSerializer(ingredients, many=True)  # many=True because it's a queryset, not one object
-
-    return JsonResponse(serializer.data, safe=False)
-    #return JsonResponse(serializers.serialize("json", ingredients))
-    #return JsonResponse(ingredients.list())
-    #return serializers.serialize("json", ingredients)
-    #return Ingredient.objects.raw('SELECT * FROM core_ingredient')
-
-def fetch_recipe(request):
+@require_GET
+def clip_recipe_view(request):
     site = request.GET.get("site")
 
     if not site:
@@ -77,10 +59,9 @@ def fetch_recipe(request):
 
 
     # Handles recipe parsing
-
     try:
-        recipe_data = recipe_parser(response)
-        if not recipe_data:
+        recipe_draft = clip_recipe(response)
+        if not recipe_draft:
             error_data = {"status": 204, 
                                   "code": "NO_RECIPE", 
                                   "message": "No recipe found"}
@@ -93,8 +74,26 @@ def fetch_recipe(request):
                       "message": "No site found"}
         return JsonResponse(error_data, status=422)
     
-    return JsonResponse(recipe_data)   
+    return JsonResponse(recipe_draft)   
 
 
+
+def save_recipes_view():
+    pass
     
 
+
+def get_ingredients(request):
+    name = request.GET.get('name') #None if not provided
+    if name:
+        ingredients = Ingredient.objects.filter(name__icontains=name)
+    else:
+        ingredients = Ingredient.objects.all()
+
+    serializer = IngredientSerializer(ingredients, many=True)  # many=True because it's a queryset, not one object
+
+    return JsonResponse(serializer.data, safe=False)
+    #return JsonResponse(serializers.serialize("json", ingredients))
+    #return JsonResponse(ingredients.list())
+    #return serializers.serialize("json", ingredients)
+    #return Ingredient.objects.raw('SELECT * FROM core_ingredient')
