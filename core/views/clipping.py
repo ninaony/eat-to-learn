@@ -1,14 +1,8 @@
-from django.shortcuts import render
-from rest_framework import viewsets
-from core.models import Ingredient
-#from django.core import serializers
 from django.http import JsonResponse
-from core.serializers import IngredientSerializer
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import require_GET
 import requests
 
-
-from core.services.ingestion import clip_recipe, RecipeParseError
+from core.services.clipping import clip_recipe, RecipeParseError
 
 @require_GET
 def clip_recipe_view(request):
@@ -74,26 +68,4 @@ def clip_recipe_view(request):
                       "message": "No site found"}
         return JsonResponse(error_data, status=422)
     
-    return JsonResponse(recipe_draft)   
-
-
-
-def save_recipes_view():
-    pass
-    
-
-
-def get_ingredients(request):
-    name = request.GET.get('name') #None if not provided
-    if name:
-        ingredients = Ingredient.objects.filter(name__icontains=name)
-    else:
-        ingredients = Ingredient.objects.all()
-
-    serializer = IngredientSerializer(ingredients, many=True)  # many=True because it's a queryset, not one object
-
-    return JsonResponse(serializer.data, safe=False)
-    #return JsonResponse(serializers.serialize("json", ingredients))
-    #return JsonResponse(ingredients.list())
-    #return serializers.serialize("json", ingredients)
-    #return Ingredient.objects.raw('SELECT * FROM core_ingredient')
+    return JsonResponse(recipe_draft)

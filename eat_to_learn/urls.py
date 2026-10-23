@@ -16,17 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-#from core.views import IngredientViewSet
-from core.views.ingestion import get_ingredients, clip_recipe_view
-
-#router = DefaultRouter()
-#router.register(r'ingredients', IngredientViewSet, basename='ingredient')
+from core.views.clipping import clip_recipe_view
 
 urlpatterns = [
-    #path('/', )
     path('admin/', admin.site.urls),
-    path('ingredient/', get_ingredients),
     path('recipes/clip', clip_recipe_view, name='clip_recipe_view')
-    #path('api/', include(router.urls)),
 ]
