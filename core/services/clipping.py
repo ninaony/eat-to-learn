@@ -1,7 +1,7 @@
 from recipe_scrapers import scrape_html
 from recipe_scrapers._exceptions import SchemaOrgException
 from core.models import Recipe
-from core.services.recipes import create_recipe
+
 
 # Not in use: links
 RECIPE_FIELDS = [ "title", "author", "description", "keywords", "instructions", 
@@ -49,4 +49,4 @@ def clip_recipe(response):
 
     # TO DO: add draft status field just in case the user doesn't save it?
     # TO DO: return helper message if necessary
-    return create_recipe(recipe_data)
+    return recipe_data
